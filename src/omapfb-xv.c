@@ -230,10 +230,16 @@ int OMAPFBXVPutImage (ScrnInfoPtr pScrn,
 		if (!ofb->port->plane_info.enabled) {
 
 			/* The memory size is already set in OMAPFBXVQueryImageAttributes */
+			ofb->port->mem_info.type = OMAPFB_MEMTYPE_SRAM;
 			if (ioctl(ofb->port->fd, OMAPFB_SETUP_MEM, &ofb->port->mem_info) != 0) {
-				xf86DrvMsg(pScrn->scrnIndex, X_ERROR,
-				           "Failed to unallocate video plane memory\n");
-				return 0;
+				xf86DrvMsg(pScrn->scrnIndex, X_WARNING,
+				           "Failed to allocate video plane memory in SRAM\n");
+				ofb->port->mem_info.type = OMAPFB_MEMTYPE_SDRAM;
+				if (ioctl(ofb->port->fd, OMAPFB_SETUP_MEM, &ofb->port->mem_info) != 0) {
+					xf86DrvMsg(pScrn->scrnIndex, X_ERROR,
+					           "Failed to allocate video plane memory in SDRAM\n");
+					return 0;
+				}
 			}
 
 			/* Map the framebuffer memory */
@@ -456,10 +462,6 @@ int OMAPFBXVInit (ScrnInfoPtr pScrn,
 	/* Deallocate existing memory */
 	if(ofb->port->mem_info.size) {
 		ofb->port->mem_info.size = 0;
-		/* We probably would want to use SRAM here, but allocating it
-		 * doesn't seem possible...
-		 */
-//		ofb->port->mem_info.type = OMAPFB_MEMTYPE_SRAM;
 		if (ioctl(ofb->port->fd, OMAPFB_SETUP_MEM, &ofb->port->mem_info) != 0) {
 			xf86DrvMsg(pScrn->scrnIndex, X_ERROR,
 			           "Failed to unallocate video plane memory: %s\n",
