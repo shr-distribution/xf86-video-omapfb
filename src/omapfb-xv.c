@@ -70,7 +70,6 @@ static XF86AttributeRec xv_attributes[] = {
 
 static Bool OMAPFBPortGetRec(ScrnInfoPtr pScrn);
 static void OMAPFBPortFreeRec(ScrnInfoPtr pScrn);
-static int OMAPFBPortSetup (ScrnInfoPtr pScrn, const char *device);
 
 /* XV interface functions */
 
