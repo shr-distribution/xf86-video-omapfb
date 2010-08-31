@@ -37,6 +37,7 @@
 #include "xf86_OSlib.h"
 
 #include "micmap.h"
+#include "mipointer.h"
 #include "fb.h"
 
 #include "exa.h"

@@ -40,6 +40,7 @@
 
 #include "omapfb-driver.h"
 #include "omapfb-xv-platform.h"
+#include "image-format-conversions.h"
 
 int OMAPFBXVApplyClip(ScrnInfoPtr pScrn, RegionPtr clipBoxes)
 {

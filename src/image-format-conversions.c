@@ -35,6 +35,8 @@
 #include <stdint.h>
 #include <string.h>
 
+#include "image-format-conversions.h"
+
 /* Basic line-based copy for packed formats */
 void packed_line_copy(int w, int h, int stride, uint8_t *src, uint8_t *dest)
 {
