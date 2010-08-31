@@ -332,7 +332,7 @@ static void OMAPFBPortFreeRec(ScrnInfoPtr pScrn)
 		return;
 
 	close(ofb->port->fd);
-	xfree(ofb->port);
+	free(ofb->port);
 	
 	ofb->port = NULL;
 }

@@ -88,7 +88,7 @@ OMAPFBFreeRec(ScrnInfoPtr pScrn)
 {
 	if (pScrn->driverPrivate == NULL)
 		return;
-	xfree(pScrn->driverPrivate);
+	free(pScrn->driverPrivate);
 	pScrn->driverPrivate = NULL;
 }
 
@@ -241,7 +241,7 @@ OMAPFBProbe(DriverPtr drv, int flags)
 
 	}
 
-	xfree(devSections);
+	free(devSections);
 
 	return foundScreen;
 }
@@ -413,7 +413,7 @@ OMAPFBXvScreenInit(ScreenPtr pScreen)
 	if (n > 0 || on > 0) {
 		int i;
 		XF86VideoAdaptorPtr *generic_adaptors = ptr;
-		ptr = xalloc((n + on) * sizeof(XF86VideoAdaptorPtr));
+		ptr = malloc((n + on) * sizeof(XF86VideoAdaptorPtr));
 		for (i = 0; i < n; i++) {
 			ptr[i] = generic_adaptors[i];
 		}
@@ -568,7 +568,7 @@ OMAPFBScreenInit(int scrnIndex, ScreenPtr pScreen, int argc, char **argv)
 	if (OMAPFBSetupExa(ofb)) {
 		exaDriverInit(pScreen, ofb->exa);
 	} else {
-		xfree(ofb->exa);
+		free(ofb->exa);
 		ofb->exa = NULL;
 	}
 #endif
