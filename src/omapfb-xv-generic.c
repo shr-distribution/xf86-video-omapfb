@@ -119,7 +119,7 @@ int OMAPXVSetupVideoPlane(ScrnInfoPtr pScrn)
 int OMAPFBXVPutImageGeneric (ScrnInfoPtr pScrn,
                              short src_x, short src_y, short drw_x, short drw_y,
                              short src_w, short src_h, short drw_w, short drw_h,
-                             int image, char *buf, short width, short height,
+                             int image, unsigned char *buf, short width, short height,
                              Bool sync, RegionPtr clipBoxes, pointer data)
 {
 	OMAPFBPtr ofb = OMAPFB(pScrn);
@@ -281,19 +281,19 @@ int OMAPFBXVPutImageGeneric (ScrnInfoPtr pScrn,
 }
 
 /* Stop video, only deinit overlay if cleanup is true */
-int OMAPFBXVStopVideoGeneric (ScrnInfoPtr pScrn, pointer data, Bool cleanup)
+void OMAPFBXVStopVideoGeneric (ScrnInfoPtr pScrn, pointer data, Bool cleanup)
 {
 	OMAPFBPtr ofb = OMAPFB(pScrn);
 	xf86DrvMsg(pScrn->scrnIndex, X_INFO, "XV: %s (%i)\n", __FUNCTION__, cleanup);
 
 	if (ofb->port == NULL)
-		return Success;
+		return;
 
 	if(ofb->port->plane_info.enabled) {
 		if (ioctl (ofb->port->fd, OMAPFB_SYNC_GFX))
 		{
 			xf86Msg(X_ERROR, "%s: Graphics sync failed\n", __FUNCTION__);
-			return 0;
+			return;
 		}
 
 		if (ioctl (ofb->port->fd, OMAPFB_QUERY_PLANE, &ofb->port->plane_info)) {
@@ -316,7 +316,7 @@ int OMAPFBXVStopVideoGeneric (ScrnInfoPtr pScrn, pointer data, Bool cleanup)
 		if (ioctl (ofb->port->fd, OMAPFB_SYNC_GFX))
 		{
 			xf86Msg(X_ERROR, "%s: Graphics sync failed\n", __FUNCTION__);
-			return 0;
+			return;
 		}
 	}
 
@@ -334,6 +334,6 @@ int OMAPFBXVStopVideoGeneric (ScrnInfoPtr pScrn, pointer data, Bool cleanup)
 		}
 	}
 
-	return Success;
+	return;
 }
 

@@ -100,10 +100,10 @@ int OMAPFBXVGetPortAttribute (ScrnInfoPtr pScrn,
 /* Calculate best size for vid_w x vid_h video scaled to drw_w x drw_h on
  * screen. Basically we only need to clip it to screen size.
  */
-int OMAPFBXVQueryBestSize (ScrnInfoPtr pScrn,
-                           Bool motion, short vid_w, short vid_h,
-                           short drw_w, short drw_h,
-                           unsigned int *p_w, unsigned int *p_h, pointer data)
+void OMAPFBXVQueryBestSize (ScrnInfoPtr pScrn,
+                            Bool motion, short vid_w, short vid_h,
+                            short drw_w, short drw_h,
+                            unsigned int *p_w, unsigned int *p_h, pointer data)
 {
 	OMAPFBPtr ofb = OMAPFB(pScrn);
 	xf86DrvMsg(pScrn->scrnIndex, X_INFO, "XV: %s\n", __FUNCTION__);
@@ -115,13 +115,11 @@ int OMAPFBXVQueryBestSize (ScrnInfoPtr pScrn,
 		*p_w = ofb->state_info.xres;
 	if (drw_h > ofb->state_info.yres)
 		*p_h = ofb->state_info.yres;
-
-	return Success;
 }
 
 /* Calculates and returns image size for different formats */
 int OMAPFBXVQueryImageAttributes (ScrnInfoPtr pScrn,
-                                  int id, short *width, short *height,
+                                  int id, unsigned short *width, unsigned short *height,
                                   int *pitches, int *offsets)
 {
 	int w, h;

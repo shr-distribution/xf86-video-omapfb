@@ -89,7 +89,7 @@ int OMAPFBXVApplyClip(ScrnInfoPtr pScrn, RegionPtr clipBoxes)
 int OMAPFBXVPutImageBlizzard (ScrnInfoPtr pScrn,
                               short src_x, short src_y, short drw_x, short drw_y,
                               short src_w, short src_h, short drw_w, short drw_h,
-                              int image, char *buf, short width, short height,
+                              int image, unsigned char *buf, short width, short height,
                               Bool sync, RegionPtr clipBoxes, pointer data)
 {
 	struct omapfb_update_window w;
@@ -305,13 +305,13 @@ int OMAPFBXVPutImageBlizzard (ScrnInfoPtr pScrn,
 }
 
 /* Stop video, only deinit overlay if cleanup is true */
-int OMAPFBXVStopVideoBlizzard (ScrnInfoPtr pScrn, pointer data, Bool cleanup)
+void OMAPFBXVStopVideoBlizzard (ScrnInfoPtr pScrn, pointer data, Bool cleanup)
 {
 	OMAPFBPtr ofb = OMAPFB(pScrn);
 	xf86DrvMsg(pScrn->scrnIndex, X_INFO, "XV: %s (%i)\n", __FUNCTION__, cleanup);
 
 	if (ofb->port == NULL)
-		return Success;
+		return;
 
 	if(ofb->port->plane_info.enabled) {
 		int mode;
@@ -329,14 +329,14 @@ int OMAPFBXVStopVideoBlizzard (ScrnInfoPtr pScrn, pointer data, Bool cleanup)
 		if (ioctl (ofb->port->fd, OMAPFB_SYNC_GFX))
 		{
 			xf86Msg(X_ERROR, "%s: Graphics sync failed\n", __FUNCTION__);
-			return 0;
+			return;
 		}
 
 		if (ioctl (ofb->fd, OMAPFB_UPDATE_WINDOW, &w))
 		{
 			xf86Msg(X_ERROR, "%s: Failed to update screen:"
 			                 " %s\n", __FUNCTION__, strerror(errno));
-			return XvBadAlloc;
+			return;
 		}
 
 		mode = OMAPFB_AUTO_UPDATE;
@@ -344,7 +344,7 @@ int OMAPFBXVStopVideoBlizzard (ScrnInfoPtr pScrn, pointer data, Bool cleanup)
 		{
 			xf86Msg(X_ERROR, "%s: Failed to set auto update mode:"
 			                 " %s\n", __FUNCTION__, strerror(errno));
-			return XvBadAlloc;
+			return;
 		}
 
 		if (ioctl (ofb->port->fd, OMAPFB_QUERY_PLANE, &ofb->port->plane_info)) {
@@ -367,7 +367,7 @@ int OMAPFBXVStopVideoBlizzard (ScrnInfoPtr pScrn, pointer data, Bool cleanup)
 		if (ioctl (ofb->port->fd, OMAPFB_SYNC_GFX))
 		{
 			xf86Msg(X_ERROR, "%s: Graphics sync failed\n", __FUNCTION__);
-			return 0;
+			return;
 		}
 	}
 
@@ -385,6 +385,6 @@ int OMAPFBXVStopVideoBlizzard (ScrnInfoPtr pScrn, pointer data, Bool cleanup)
 		}
 	}
 
-	return Success;
+	return;
 }
 
