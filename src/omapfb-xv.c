@@ -75,20 +75,20 @@ static int OMAPFBPortSetup (ScrnInfoPtr pScrn, const char *device);
 /* XV interface functions */
 
 /* Set attributes */
-int OMAPFBXVSetPortAttribute (ScrnInfoPtr pScrn,
-                              Atom attribute,
-                              INT32 value,
-                              pointer data)
+static int OMAPFBXVSetPortAttribute (ScrnInfoPtr pScrn,
+                                     Atom attribute,
+                                     INT32 value,
+                                     pointer data)
 {
 	xf86DrvMsg(pScrn->scrnIndex, X_INFO, "XV: %s\n", __FUNCTION__);
 	return Success;
 }
 
 /* Get attributes */
-int OMAPFBXVGetPortAttribute (ScrnInfoPtr pScrn,
-                              Atom attribute,
-                              INT32 *value,
-                              pointer data)
+static int OMAPFBXVGetPortAttribute (ScrnInfoPtr pScrn,
+                                     Atom attribute,
+                                     INT32 *value,
+                                     pointer data)
 {
 	xf86DrvMsg(pScrn->scrnIndex, X_INFO, "XV: %s\n", __FUNCTION__);
 
@@ -100,10 +100,10 @@ int OMAPFBXVGetPortAttribute (ScrnInfoPtr pScrn,
 /* Calculate best size for vid_w x vid_h video scaled to drw_w x drw_h on
  * screen. Basically we only need to clip it to screen size.
  */
-void OMAPFBXVQueryBestSize (ScrnInfoPtr pScrn,
-                            Bool motion, short vid_w, short vid_h,
-                            short drw_w, short drw_h,
-                            unsigned int *p_w, unsigned int *p_h, pointer data)
+static void OMAPFBXVQueryBestSize (ScrnInfoPtr pScrn,
+                                   Bool motion, short vid_w, short vid_h,
+                                   short drw_w, short drw_h,
+                                   unsigned int *p_w, unsigned int *p_h, pointer data)
 {
 	OMAPFBPtr ofb = OMAPFB(pScrn);
 	xf86DrvMsg(pScrn->scrnIndex, X_INFO, "XV: %s\n", __FUNCTION__);
@@ -118,9 +118,9 @@ void OMAPFBXVQueryBestSize (ScrnInfoPtr pScrn,
 }
 
 /* Calculates and returns image size for different formats */
-int OMAPFBXVQueryImageAttributes (ScrnInfoPtr pScrn,
-                                  int id, unsigned short *width, unsigned short *height,
-                                  int *pitches, int *offsets)
+static int OMAPFBXVQueryImageAttributes (ScrnInfoPtr pScrn,
+                                         int id, unsigned short *width, unsigned short *height,
+                                         int *pitches, int *offsets)
 {
 	int w, h;
 	int size = 0;
