@@ -170,7 +170,6 @@ OMAPFBProbe(DriverPtr drv, int flags)
 	int i;
        	GDevPtr *devSections;
 	int numDevSections;
-	int bus,device,func;
 	char *dev;
 	ScrnInfoPtr pScrn = NULL;
 	Bool foundScreen = FALSE;
@@ -255,7 +254,6 @@ OMAPFBPreInit(ScrnInfoPtr pScrn, int flags)
 	char *dev;
 	rgb zeros = { 0, 0, 0 };
 	struct omapfb_caps caps;
-	char ctrl_name[32];
 
 	if (flags & PROBE_DETECT) return FALSE;
 	
