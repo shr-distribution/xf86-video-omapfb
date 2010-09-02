@@ -28,9 +28,9 @@
 #include "exa.h"
 
 #ifdef LOG_CALLS
-# define FALLBACK do { ErrorF("Fallback from %s\n", __FUNCTION__); return FALSE; } while (0)
+# define FALLBACK do { ErrorF("Fallback from %s\n", __FUNCTION__); } while (0)
 #else
-# define FALLBACK return FALSE
+# define FALLBACK do { } while (0) 
 #endif
 
 /*** Solid fill */
@@ -39,15 +39,16 @@ static Bool
 SWPrepareSolid(PixmapPtr pPixmap, int alu, Pixel planemask, Pixel fg)
 {
 	FALLBACK;
+	return FALSE;
 }
 
-static Bool
+static void
 SWSolid(PixmapPtr pPixmap, int x1, int y1, int x2, int y2)
 {
 	FALLBACK;
 }
 
-static Bool
+static void
 SWDoneSolid(PixmapPtr pPixmap)
 {
 	FALLBACK;
@@ -59,15 +60,16 @@ static Bool
 SWPrepareCopy(PixmapPtr pSrcPixmap, PixmapPtr pDstPixmap, int dx, int dy, int alu, Pixel planemask) 
 {
 	FALLBACK;
+	return FALSE;
 }
 
-static Bool
+static void
 SWCopy(PixmapPtr pDstPixmap, int srcX, int srcY, int dstX, int dstY, int width, int height) 
 {
 	FALLBACK;
 }
 
-static Bool
+static void
 SWDoneCopy(PixmapPtr pDstPixmap) 
 {
 	FALLBACK;
@@ -79,12 +81,14 @@ static Bool
 SWCheckComposite(int op, PicturePtr pSrcPicture, PicturePtr pMaskPicture, PicturePtr pDstPicture) 
 {
 	FALLBACK;
+	return FALSE;
 }
 
 static Bool
 SWPrepareComposite(int op, PicturePtr pSrcPicture, PicturePtr pMaskPicture, PicturePtr pDstPicture, PixmapPtr pSrc, PixmapPtr pMask, PixmapPtr pDst)
 {
 	FALLBACK;
+	return FALSE;
 }
 
 static void
@@ -109,6 +113,7 @@ SWPrepareAccess(PixmapPtr pPix, int index)
 {
 	return TRUE;
 }
+
 static void
 SWFinishAccess(PixmapPtr pPix, int index)
 {
