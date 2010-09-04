@@ -253,7 +253,6 @@ OMAPFBPreInit(ScrnInfoPtr pScrn, int flags)
 	EntityInfoPtr pEnt;
 	char *dev;
 	rgb zeros = { 0, 0, 0 };
-	struct omapfb_caps caps;
 
 	if (flags & PROBE_DETECT) return FALSE;
 	
@@ -293,8 +292,8 @@ OMAPFBPreInit(ScrnInfoPtr pScrn, int flags)
 	OMAPFBProbeController(ofb->ctrl_name);
 
 	/* Print out capabilities, if available */
-	if (!ioctl (ofb->fd, OMAPFB_GET_CAPS, &caps)) {
-		OMAPFBPrintCapabilities(pScrn, &caps,
+	if (!ioctl (ofb->fd, OMAPFB_GET_CAPS, &ofb->caps)) {
+		OMAPFBPrintCapabilities(pScrn, &ofb->caps,
 		                        "Base plane");
 	}
 
