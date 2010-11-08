@@ -65,7 +65,7 @@ write_sysfs_value(const char *fname, const char *value)
 	fd = open(fname, O_WRONLY, 0);
 	if (fd != -1)
 	{
-		int w = write(fd, value, strlen(value));
+		int w = write(fd, value, strlen(value)+1);
 		close(fd);
 		if (w == -1)
 			return errno;
