@@ -29,6 +29,7 @@ omapfb_drv_la_SOURCES = \
          omapfb-utils.c \
          omapfb-crtc.c \
          omapfb-output.c \
+         omapfb-output-dss.c \
          omapfb-xv.c \
          omapfb-xv-generic.c \
          omapfb-xv-blizzard.c \

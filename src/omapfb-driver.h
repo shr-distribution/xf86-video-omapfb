@@ -76,6 +76,7 @@ typedef struct {
 
 	xf86CrtcPtr crtc;
 	xf86OutputPtr outputs[OMAPFB_MAX_DISPLAYS];
+	char timings[OMAPFB_MAX_DISPLAYS][64];
 } OMAPFBRec, *OMAPFBPtr;
 
 #define OMAPFB(p) ((OMAPFBPtr)((p)->driverPrivate))

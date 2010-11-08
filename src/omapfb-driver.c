@@ -538,7 +538,7 @@ OMAPFBScreenInit(int scrnIndex, ScreenPtr pScreen, int argc, char **argv)
 		 * kernel driver in which case we only do basic 2D stuff...
 		 */
 		xf86DrvMsg(scrnIndex, X_ERROR, "Reading plane info failed\n");
-	} else {
+	} else if (!ofb->dss) {
 
 		ofb->plane_info.enabled = 1;
 		ofb->plane_info.out_width = ofb->state_info.xres;
@@ -578,7 +578,9 @@ OMAPFBScreenInit(int scrnIndex, ScreenPtr pScreen, int argc, char **argv)
 #endif
 
 	/* Initialize XVideo support */
-	OMAPFBXvScreenInit(pScreen);
+	/* FIXME: Currently dss & XV do not co-exist */
+	if (!ofb->dss)
+		OMAPFBXvScreenInit(pScreen);
 	
 	/* Initialize RANDR support */
 	xf86CrtcScreenInit(pScreen);

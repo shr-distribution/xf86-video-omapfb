@@ -181,11 +181,3 @@ OMAPFBOutputInit(ScrnInfoPtr pScrn)
 
 }
 
-/* For newer omapfb DSS kernel API */
-void
-OMAPFBOutputInitDSS(ScrnInfoPtr pScrn)
-{
-	/* FIXME: Stub to get things going first */
-	OMAPFBOutputInit(pScrn);
-}
-
