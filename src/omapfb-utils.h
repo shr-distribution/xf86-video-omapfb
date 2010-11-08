@@ -24,6 +24,9 @@
 #ifndef __OMAPFB_UTILS_H__
 #define __OMAPFB_UTILS_H__
 
+#include "xorg-server.h"
+#include "xf86Modes.h"
+
 #define SYSFS_DSS_DIR "/sys/devices/platform/omapdss"
 
 int read_sysfs_value(const char *fname, char *value, size_t len);
@@ -31,6 +34,8 @@ int write_sysfs_value(const char *fname, const char *value);
 
 int read_dss_sysfs_value(const char *target, int index, const char *entry, char *value, size_t len);
 int write_dss_sysfs_value(const char *target, int index, const char *entry, const char *value);
+
+int omapfb_timings_to_mode(const char *timings, DisplayModePtr mode);
 
 #endif /* __OMAPFB_UTILS_H__ */
 

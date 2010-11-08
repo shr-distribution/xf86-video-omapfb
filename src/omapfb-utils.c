@@ -84,3 +84,25 @@ write_dss_sysfs_value(const char *target, int index,
 	return write_sysfs_value(fname, value);
 }
 
+int
+omapfb_timings_to_mode(const char *timings, DisplayModePtr mode)
+{
+	int clock, width, hfp, hbp, hsw, height, vfp, vbp, vsw;
+	if (sscanf(timings, "%i,%i/%i/%i/%i,%i/%i/%i/%i", &clock, &width, &hfp, &hbp, &hsw, &height, &vfp, &vbp, &vsw) < 9)
+		return FALSE;
+	mode->Clock = clock;
+	mode->SynthClock = clock;
+	mode->HDisplay = width;
+	mode->HSyncStart = width + hfp;
+	mode->HSyncEnd = width + hbp;
+	mode->HTotal = width + hfp + hbp + hsw;
+	mode->HSkew = 0;
+	mode->VDisplay = height;
+	mode->VSyncStart = height + vfp;
+	mode->VSyncEnd = height + vbp;
+	mode->VTotal = height + vfp + vbp + vsw;
+	mode->VScan = 0;
+
+	return TRUE;
+}
+
