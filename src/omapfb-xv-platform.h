@@ -40,7 +40,8 @@ int OMAPFBXVPutImageGeneric (ScrnInfoPtr pScrn,
                              short src_x, short src_y, short drw_x, short drw_y,
                              short src_w, short src_h, short drw_w, short drw_h,
                              int image, unsigned char *buf, short width, short height,
-                             Bool sync, RegionPtr clipBoxes, pointer data);
+                             Bool sync, RegionPtr clipBoxes, pointer data,
+                             DrawablePtr pDraw);
 void OMAPFBXVStopVideoGeneric (ScrnInfoPtr pScrn, pointer data, Bool cleanup);
 
 /* Blizzard is Epson S1D13745A01, found on eg. Nokia N8x0 */
@@ -48,7 +49,8 @@ int OMAPFBXVPutImageBlizzard (ScrnInfoPtr pScrn,
                              short src_x, short src_y, short drw_x, short drw_y,
                              short src_w, short src_h, short drw_w, short drw_h,
                              int image, unsigned char *buf, short width, short height,
-                             Bool sync, RegionPtr clipBoxes, pointer data);
+                             Bool sync, RegionPtr clipBoxes, pointer data,
+                             DrawablePtr pDraw);
 void OMAPFBXVStopVideoBlizzard (ScrnInfoPtr pScrn, pointer data, Bool cleanup);
 
 #define OUTPUT_IS_OFFSCREEN (drw_x < 0 || drw_y < 0 || drw_x + drw_w > ofb->state_info.xres || drw_y + drw_h > ofb->state_info.yres)
