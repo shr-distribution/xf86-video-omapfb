@@ -253,6 +253,7 @@ OMAPFBPreInit(ScrnInfoPtr pScrn, int flags)
 	EntityInfoPtr pEnt;
 	char *dev;
 	rgb zeros = { 0, 0, 0 };
+	struct stat st;
 
 	if (flags & PROBE_DETECT) return FALSE;
 	
@@ -290,6 +291,13 @@ OMAPFBPreInit(ScrnInfoPtr pScrn, int flags)
 
 	/* Try to detect what LCD controller we're using */
 	OMAPFBProbeController(ofb->ctrl_name);
+
+	/* Do we have the DSS kernel API? */
+	if (stat(SYSFS_DSS_DIR, &st) == 0) {
+		ofb->dss = TRUE;
+	} else {
+		ofb->dss = FALSE;
+	}
 
 	/* Print out capabilities, if available */
 	if (!ioctl (ofb->fd, OMAPFB_GET_CAPS, &ofb->caps)) {

@@ -59,6 +59,8 @@ typedef struct {
 
 	/* LCD controller name */
 	char ctrl_name[32];
+	/* Do we have DSS API? */
+	Bool dss;
 	
 	OMAPFBPortPtr port;
 
@@ -76,6 +78,8 @@ void OMAPFBPrintCapabilities(ScrnInfoPtr pScrn,
 
 Bool OMAPFBSetupExa(OMAPFBPtr ofb);
 int OMAPFBXVInit (ScrnInfoPtr pScrn, XF86VideoAdaptorPtr **omap_adaptors);
+
+#define SYSFS_DSS_DIR "/sys/devices/platform/omapdss"
 
 #endif /* __OMAPFB_DRIVER_H__ */
 
