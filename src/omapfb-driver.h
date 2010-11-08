@@ -87,7 +87,5 @@ void OMAPFBPrintCapabilities(ScrnInfoPtr pScrn,
 Bool OMAPFBSetupExa(OMAPFBPtr ofb);
 int OMAPFBXVInit (ScrnInfoPtr pScrn, XF86VideoAdaptorPtr **omap_adaptors);
 
-#define SYSFS_DSS_DIR "/sys/devices/platform/omapdss"
-
 #endif /* __OMAPFB_DRIVER_H__ */
 

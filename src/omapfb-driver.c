@@ -61,6 +61,7 @@
 #include "omapfb-driver.h"
 #include "omapfb-crtc.h"
 #include "omapfb-output.h"
+#include "omapfb-utils.h"
 
 #define OMAPFB_VERSION 1000
 #define OMAPFB_DRIVER_NAME "OMAPFB"
