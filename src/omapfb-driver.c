@@ -335,24 +335,19 @@ OMAPFBPreInit(ScrnInfoPtr pScrn, int flags)
 	if (!xf86SetDefaultVisual(pScrn, -1))
 		return FALSE;
 
-/* FIXME: We should allow options for things like overlay framebuffers,
-          rotation, etc
-	xf86CollectOptions(pScrn, NULL);
-*/
-
 	pScrn->progClock = TRUE;
 	pScrn->chipset   = "omapfb";
 	
 	/* Start with configured virtual size */
 	pScrn->virtualX = pScrn->display->virtualX;
 	pScrn->virtualY = pScrn->display->virtualY;
-	pScrn->displayWidth = ofb->state_info.xres;
+	pScrn->displayWidth = ofb->fixed_info.line_length / (ofb->state_info.bits_per_pixel >> 3);
 
-	/* Clamp to actual resolution */
-	if (pScrn->virtualX < ofb->state_info.xres)
-		pScrn->virtualX = ofb->state_info.xres;
-	if (pScrn->virtualY < ofb->state_info.yres)
-		pScrn->virtualY = ofb->state_info.yres;
+	/* Clamp to actual virtual resolution */
+	if (pScrn->virtualX < ofb->state_info.xres_virtual)
+		pScrn->virtualX = ofb->state_info.xres_virtual;
+	if (pScrn->virtualY < ofb->state_info.yres_virtual)
+		pScrn->virtualY = ofb->state_info.yres_virtual;
 	
 	/* Setup viewport */
 	pScrn->frameX0 = 0;
@@ -360,8 +355,8 @@ OMAPFBPreInit(ScrnInfoPtr pScrn, int flags)
 	pScrn->frameX1 = ofb->state_info.xres;
 	pScrn->frameY1 = ofb->state_info.yres;
 
-	pScrn->maxVValue = ofb->state_info.xres;
-	pScrn->maxHValue = ofb->state_info.yres;
+	pScrn->maxVValue = ofb->state_info.xres_virtual;
+	pScrn->maxHValue = ofb->state_info.yres_virtual;
 
 	/* Setup default mode as the mode the fb is in on startup, *usually*
 	 * it'll be the one we want anyway
@@ -521,9 +516,6 @@ OMAPFBScreenInit(int scrnIndex, ScreenPtr pScreen, int argc, char **argv)
 		           "creating default colormap failed\n");
 		return FALSE;
 	}
-
-	/* Enforce the default mode (this is silly I guess) */
-	set_mode(ofb, &ofb->default_mode);
 
 	/* Make sure the plane is up and running */
 	if (ioctl (ofb->fd, OMAPFB_QUERY_PLANE, &ofb->plane_info)) {
