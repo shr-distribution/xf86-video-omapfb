@@ -26,6 +26,8 @@ omapfb_drv_ladir = @moduledir@/drivers
 
 omapfb_drv_la_SOURCES = \
          omapfb-driver.c \
+         omapfb-crtc.c \
+         omapfb-output.c \
          omapfb-xv.c \
          omapfb-xv-generic.c \
          omapfb-xv-blizzard.c \

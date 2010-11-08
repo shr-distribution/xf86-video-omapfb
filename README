@@ -1,0 +1,19 @@
+This is xf86-video-omapfb, the Texas Instruments OMAP framebuffer driver
+for X.Org.
+
+Roadmap
+========
+
+This is a list of plans for the future of the driver.
+
+ - RandR support:
+  - Support for multiple outputs
+   - Requires DSS kernel API
+   - Only cloning for now, since overlays don't have API to set base address
+     which would be needed for extending
+  - Support display mode switcing
+   - For fixed-resolution displays we can use output scaling
+  - Support rotation
+
+ - XV support:
+  - Support XV on/with multiple outputs (might be impossible)

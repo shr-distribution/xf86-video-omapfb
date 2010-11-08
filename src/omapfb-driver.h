@@ -24,12 +24,17 @@
 #ifndef __OMAPFB_DRIVER_H__
 #define __OMAPFB_DRIVER_H__
 
+#include "xorg-server.h"
 #include "xf86.h"
 #include "exa.h"
 #include "xf86xv.h"
+#include "xf86_OSlib.h"
+#include "xf86Crtc.h"
 
 #include <linux/fb.h>
 #include "omapfb.h"
+
+#define OMAPFB_MAX_DISPLAYS 10
 
 /* XV port */
 typedef struct {
@@ -68,6 +73,9 @@ typedef struct {
 	DisplayModeRec default_mode;
 
 	ExaDriverPtr exa;
+
+	xf86CrtcPtr crtc;
+	xf86OutputPtr outputs[OMAPFB_MAX_DISPLAYS];
 } OMAPFBRec, *OMAPFBPtr;
 
 #define OMAPFB(p) ((OMAPFBPtr)((p)->driverPrivate))
