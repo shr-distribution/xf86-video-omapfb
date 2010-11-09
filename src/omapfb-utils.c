@@ -115,4 +115,21 @@ mode_to_string(DisplayModePtr mode, char *mode_str, int size)
 	         mode->VDisplay, mode->VSyncStart, mode->VSyncEnd, mode->VTotal);
 }
 
+void
+mode_to_timings(DisplayModePtr mode, char *timings, int size)
+{
+	int clock = mode->Clock;
+	int width = mode->HDisplay;
+	int hfp = mode->HSyncStart - width;
+	int hbp = mode->HSyncEnd - width;
+	int hsw = mode->HTotal - width - hfp - hbp;
+	int height = mode->VDisplay;
+	int vfp = mode->VSyncStart - height;
+	int vbp = mode->VSyncEnd - height;
+	int vsw = mode->VTotal - height - vfp - vbp;
+	snprintf(timings, size, "%i,%i/%i/%i/%i,%i/%i/%i/%i",
+	         clock,
+	         width, hfp, hbp, hsw,
+	         height, vfp, vbp, vsw);
+}
 
