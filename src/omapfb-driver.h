@@ -1,5 +1,5 @@
 /* Texas Instruments OMAP framebuffer driver for X.Org
- * Copyright 2008 Kalle Vahlman, <zuh@iki.fi>
+ * Copyright 2008, 2010 Kalle Vahlman, <zuh@iki.fi>
  *
  * Permission to use, copy, modify, distribute and sell this software and its
  * documentation for any purpose is hereby granted without fee, provided that

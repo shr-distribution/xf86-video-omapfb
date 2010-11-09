@@ -1,5 +1,5 @@
 /* Texas Instruments OMAP framebuffer driver for X.Org
- * Copyright 2008 Kalle Vahlman, <zuh@iki.fi>
+ * Copyright 2008, 2010 Kalle Vahlman, <zuh@iki.fi>
  *
  * The driver setup in this file is adapted from the fbdev driver
  * Original authors of the fbdev driver:
