@@ -36,9 +36,11 @@ OMAPFBCrtcResize (ScrnInfoPtr pScrn, int width, int height)
 	if (width == pScrn->virtualX && height == pScrn->virtualY)
 		return TRUE;
 
+	/* We never change the actual size of the fb, so we just update
+	 * the required values here. The mode is actually applied in SetMode.
+	 */
 	pScrn->virtualX = width;
 	pScrn->virtualY = height;
-	pScrn->displayWidth = ofb->fixed_info.line_length / (ofb->state_info.bits_per_pixel>>3);
 
 	return TRUE;
 }
@@ -83,13 +85,52 @@ OMAPFBCrtcSetMode (xf86CrtcPtr crtc,
 {
 	crtc->mode = *mode;
 
-	/* FIXME: actually set the framebuffer mode here */
+	/* We need the output to be configured first, so defer mode setting to commit */
 }
 
 static void
 OMAPFBCrtcCommitChangeMode (xf86CrtcPtr crtc)
 {
-	/* Here just because the server tends to crash without... */
+	struct fb_var_screeninfo v;
+	OMAPFBPtr ofb = OMAPFB(crtc->scrn);
+	DisplayModePtr mode = &crtc->mode;
+
+	v = ofb->state_info;
+	v.xres = mode->HDisplay;
+	v.yres = mode->VDisplay;
+	v.activate = FB_ACTIVATE_NOW;
+	v.pixclock = KHZ2PICOS(mode->Clock ? mode->Clock : 56000);
+	v.left_margin = mode->HTotal - mode->HSyncEnd;
+	v.right_margin = mode->HSyncStart - mode->HDisplay;
+	v.upper_margin = mode->VTotal - mode->VSyncEnd;
+	v.lower_margin = mode->VSyncStart - mode->VDisplay;
+	v.hsync_len = mode->HSyncEnd - mode->HSyncStart;
+	v.vsync_len = mode->VSyncEnd - mode->VSyncStart;
+
+	if (ioctl (ofb->fd, FBIOPUT_VSCREENINFO, &v))
+	{
+		xf86DrvMsg(crtc->scrn->scrnIndex, X_ERROR,
+		           "%s: Setting mode failed: %s\n",
+		           __FUNCTION__, strerror(errno));
+	}
+
+	if (ioctl (ofb->fd, FBIOGET_VSCREENINFO, &ofb->state_info))
+	{
+		xf86DrvMsg(crtc->scrn->scrnIndex, X_ERROR,
+		           "%s: Reading resolution info failed: %s\n",
+		           __FUNCTION__, strerror(errno));
+	}
+
+	if (ioctl (ofb->fd, FBIOGET_FSCREENINFO, &ofb->fixed_info)) {
+		xf86DrvMsg(crtc->scrn->scrnIndex, X_ERROR,
+		           "%s: Reading hardware info failed: %s\n",
+		           __FUNCTION__, strerror(errno));
+	}
+
+	/* Update stride */
+	crtc->scrn->displayWidth = ofb->fixed_info.line_length /
+	                          (ofb->state_info.bits_per_pixel>>3);;
+
 }
 
 static void *
