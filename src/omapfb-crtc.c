@@ -147,13 +147,13 @@ OMAPFBCRTCInit(ScrnInfoPtr pScrn)
 	 * In practise, this doesn't seem to be supported.
 	 * (no way to setup the overlay offset/base address)
 	 */
+	 /* FIXME: figure out what makes sense here. A known max resolution?
+	  * framebuffer size?
+	  */
 	xf86CrtcSetSizeRange(pScrn,
-	                     8, 8,
-	                     ofb->state_info.xres_virtual,
-	                     ofb->state_info.yres_virtual);
+	                     8, 8, 2048, 2048);
 
 	ofb->crtc = xf86CrtcCreate(pScrn, &OMAPFBCrtcFuncs);
-
 }
 
 
