@@ -106,3 +106,13 @@ omapfb_timings_to_mode(const char *timings, DisplayModePtr mode)
 	return TRUE;
 }
 
+void
+mode_to_string(DisplayModePtr mode, char *mode_str, int size)
+{
+	snprintf(mode_str, size, "%i %i %i %i %i  %i %i %i %i\n",
+	         mode->Clock,
+	         mode->HDisplay, mode->HSyncStart, mode->HSyncEnd, mode->HTotal,
+	         mode->VDisplay, mode->VSyncStart, mode->VSyncEnd, mode->VTotal);
+}
+
+

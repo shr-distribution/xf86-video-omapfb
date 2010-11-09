@@ -36,6 +36,7 @@ int read_dss_sysfs_value(const char *target, int index, const char *entry, char 
 int write_dss_sysfs_value(const char *target, int index, const char *entry, const char *value);
 
 int omapfb_timings_to_mode(const char *timings, DisplayModePtr mode);
+void mode_to_string(DisplayModePtr mode, char *mode_str, int size);
 
 #endif /* __OMAPFB_UTILS_H__ */
 
