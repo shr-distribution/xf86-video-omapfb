@@ -152,7 +152,8 @@ OMAPFBDSSOutputPrepareChangeMode(xf86OutputPtr output)
 static void
 OMAPFBDSSOutputCommitChangeMode(xf86OutputPtr output)
 {
-	/* Here just because the server tends to crash without... */
+	/* Wake the ouput up, for some reason this is not done by X */
+	OMAPFBDSSOutputDPMS(output, DPMSModeOn);
 }
 
 static void
@@ -160,9 +161,9 @@ OMAPFBDSSOutputSetMode (xf86OutputPtr  output,
                      DisplayModePtr mode,
                      DisplayModePtr adjusted_mode)
 {
-	xf86Msg(X_NOT_IMPLEMENTED, "%s\n", __FUNCTION__);
-	/* Wake the ouput up, for some reason this is not done by X */
-	OMAPFBDSSOutputDPMS(output, DPMSModeOn);
+	char timings[64];
+	mode_to_timings(mode, timings, 64);
+	OMAPFBDSSOutputWriteValue(output, "timings", timings);
 }
 
 static xf86OutputStatus
