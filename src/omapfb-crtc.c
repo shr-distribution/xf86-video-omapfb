@@ -98,6 +98,8 @@ OMAPFBCrtcCommitChangeMode (xf86CrtcPtr crtc)
 	v = ofb->state_info;
 	v.xres = mode->HDisplay;
 	v.yres = mode->VDisplay;
+	v.xres_virtual = crtc->scrn->virtualX;
+	v.yres_virtual = crtc->scrn->virtualY;
 	v.activate = FB_ACTIVATE_NOW;
 	v.pixclock = KHZ2PICOS(mode->Clock ? mode->Clock : 56000);
 	v.left_margin = mode->HTotal - mode->HSyncEnd;
