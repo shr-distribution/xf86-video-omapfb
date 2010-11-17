@@ -395,6 +395,10 @@ OMAPFBPreInit(ScrnInfoPtr pScrn, int flags)
 	pScrn->currentMode = pScrn->modes;
 	ofb->crtc->mode = *pScrn->currentMode;
 
+
+	/* Disable outputs that are not used */
+	xf86DisableUnusedFunctions(pScrn);
+
 	xf86PrintModes(pScrn);
 	
 	/* Set the screen dpi value (we don't give defaults) */
