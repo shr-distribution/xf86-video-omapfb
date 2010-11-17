@@ -36,6 +36,8 @@
 
 #define OMAPFB_MAX_DISPLAYS 10
 
+#include "omapfb-overlay-pool.h"
+
 /* XV port */
 typedef struct {
 	int fd;
@@ -77,6 +79,8 @@ typedef struct {
 	xf86CrtcPtr crtc;
 	xf86OutputPtr outputs[OMAPFB_MAX_DISPLAYS];
 	char timings[OMAPFB_MAX_DISPLAYS][64];
+
+	OverlayPoolPtr ovlPool;
 } OMAPFBRec, *OMAPFBPtr;
 
 #define OMAPFB(p) ((OMAPFBPtr)((p)->driverPrivate))

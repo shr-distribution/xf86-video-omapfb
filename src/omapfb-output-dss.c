@@ -35,6 +35,7 @@
 #include "omapfb-driver.h"
 #include "omapfb-output.h"
 #include "omapfb-utils.h"
+#include "omapfb-overlay-pool.h"
 
 /*** Utility functions */
 
@@ -108,8 +109,15 @@ OMAPFBDSSOutputReadValue(xf86OutputPtr output,
 static void
 OMAPFBDSSOutputDPMS (xf86OutputPtr output, int mode)
 {
+	OMAPFBPtr ofb = OMAPFB(output->scrn);
 	switch (mode) {
 		case DPMSModeOn:
+			if (!overlayPoolDisplayConnected(ofb->ovlPool, output->name))
+			{
+				int ovl = overlayPoolGetFreeOverlay(ofb->ovlPool);
+				overlayPoolConnect(ofb->ovlPool, 0, ovl, output->name);
+				overlayPoolApplyConnections(ofb->ovlPool);
+			}
 			OMAPFBDSSOutputWriteValue(output, "enabled", "1");
 			break;
 		case DPMSModeStandby:
@@ -119,6 +127,11 @@ OMAPFBDSSOutputDPMS (xf86OutputPtr output, int mode)
 			 * (save power)
 			 */
 		case DPMSModeOff:
+			if (overlayPoolDisplayConnected(ofb->ovlPool, output->name))
+			{
+				overlayPoolDisconnect(ofb->ovlPool, output->name);
+				overlayPoolApplyConnections(ofb->ovlPool);
+			}
 			OMAPFBDSSOutputWriteValue(output, "enabled", "0");
 			break;
 		default:
@@ -146,14 +159,22 @@ OMAPFBDSSOutputFixMode (xf86OutputPtr output,
 static void
 OMAPFBDSSOutputPrepareChangeMode(xf86OutputPtr output)
 {
-	/* Here just because the server tends to crash without... */
+	OMAPFBPtr ofb = OMAPFB(output->scrn);
+
+	/* Disconnect our overlay connections */
+	overlayPoolDisconnect(ofb->ovlPool, output->name);
 }
 
 static void
 OMAPFBDSSOutputCommitChangeMode(xf86OutputPtr output)
 {
-	/* Wake the ouput up, for some reason this is not done by X */
+	OMAPFBPtr ofb = OMAPFB(output->scrn);
+
+	/* Wake the output up, for some reason this is not done by X */
 	OMAPFBDSSOutputDPMS(output, DPMSModeOn);
+
+	/* Apply our overlay configuration */
+	overlayPoolApplyConnections(ofb->ovlPool);
 }
 
 static void
@@ -162,6 +183,11 @@ OMAPFBDSSOutputSetMode (xf86OutputPtr  output,
                      DisplayModePtr adjusted_mode)
 {
 	char timings[64];
+	OMAPFBPtr ofb = OMAPFB(output->scrn);
+	int ovl = overlayPoolGetFreeOverlay(ofb->ovlPool);
+
+	overlayPoolConnect(ofb->ovlPool, 0, ovl, output->name);
+
 	mode_to_timings(mode, timings, 64);
 	OMAPFBDSSOutputWriteValue(output, "timings", timings);
 }
@@ -278,25 +304,6 @@ OMAPFBOutputInitDSS(ScrnInfoPtr pScrn)
 
 	}
 
-	/* Reset the fb, overlays and managers */
-	/* FIXME: This is currently Blaze/4430SDP specific, but works with beagle too */
-	/* FIXME: we need to do this dynamically, so we could do XV too */
-	write_sysfs_value("/sys/devices/platform/omapfb/graphics/fb1/overlays", "");
-	write_sysfs_value("/sys/devices/platform/omapfb/graphics/fb2/overlays", "");
-	write_sysfs_value("/sys/devices/platform/omapfb/graphics/fb0/overlays", "0,1,2");
-
-	/* FIXME: these should be attached by name, I guess */
-	write_dss_sysfs_value("overlay", 0, "enabled", "0");
-	write_dss_sysfs_value("overlay", 0, "manager", "lcd");
-	write_dss_sysfs_value("overlay", 0, "enabled", "1");
-
-	write_dss_sysfs_value("overlay", 1, "enabled", "0");
-	write_dss_sysfs_value("overlay", 1, "manager", "2lcd");
-	write_dss_sysfs_value("overlay", 1, "enabled", "1");
-
-	write_dss_sysfs_value("overlay", 2, "enabled", "0");
-	write_dss_sysfs_value("overlay", 2, "manager", "tv");
-	write_dss_sysfs_value("overlay", 2, "enabled", "1");
-
+	ofb->ovlPool = overlayPoolInit(pScrn);
 }
 
