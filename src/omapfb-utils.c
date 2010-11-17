@@ -35,7 +35,7 @@ int
 read_sysfs_value(const char *fname, char *value, size_t len)
 {
 	int fd;
-	int r;
+	int r = -1;
 
 	fd = open(fname, O_RDONLY, 0);
 	if (fd != -1)
@@ -69,6 +69,8 @@ write_sysfs_value(const char *fname, const char *value)
 		close(fd);
 		if (w == -1)
 			return errno;
+	} else {
+		return fd;
 	}
 	return 0;
 }
