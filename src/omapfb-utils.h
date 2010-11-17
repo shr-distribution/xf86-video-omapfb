@@ -28,12 +28,16 @@
 #include "xf86Modes.h"
 
 #define SYSFS_DSS_DIR "/sys/devices/platform/omapdss"
+#define SYSFS_FB_DIR "/sys/devices/platform/omapfb"
 
 int read_sysfs_value(const char *fname, char *value, size_t len);
 int write_sysfs_value(const char *fname, const char *value);
 
 int read_dss_sysfs_value(const char *target, int index, const char *entry, char *value, size_t len);
 int write_dss_sysfs_value(const char *target, int index, const char *entry, const char *value);
+
+int read_fb_sysfs_value(int index, const char *entry, char *value, size_t len);
+int write_fb_sysfs_value(int index, const char *entry, const char *value);
 
 int omapfb_timings_to_mode(const char *timings, DisplayModePtr mode);
 void mode_to_string(DisplayModePtr mode, char *mode_str, int size);

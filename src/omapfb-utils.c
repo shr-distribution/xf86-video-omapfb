@@ -58,6 +58,16 @@ read_dss_sysfs_value(const char *target, int index,
 }
 
 int
+read_fb_sysfs_value(int index, const char *entry, char *value, size_t len)
+{
+	char fname[512];
+
+	snprintf(fname, 512, SYSFS_FB_DIR "/graphics/fb%i/%s", index, entry);
+
+	return read_sysfs_value(fname, value, len);
+}
+
+int
 write_sysfs_value(const char *fname, const char *value)
 {
 	int fd;
@@ -82,6 +92,15 @@ write_dss_sysfs_value(const char *target, int index,
 	char fname[512];
 
 	snprintf(fname, 512, SYSFS_DSS_DIR "/%s%i/%s", target, index, entry);
+
+	return write_sysfs_value(fname, value);
+}
+
+int write_fb_sysfs_value(int index, const char *entry, const char *value)
+{
+	char fname[512];
+
+	snprintf(fname, 512, SYSFS_FB_DIR "/graphics/fb%i/%s", index, entry);
 
 	return write_sysfs_value(fname, value);
 }
