@@ -581,10 +581,10 @@ OMAPFBScreenInit(int scrnIndex, ScreenPtr pScreen, int argc, char **argv)
 	/* FIXME: Currently dss & XV do not co-exist */
 	if (!ofb->dss)
 		OMAPFBXvScreenInit(pScreen);
-	
+
 	/* Initialize RANDR support */
 	xf86CrtcScreenInit(pScreen);
-	
+
 	return TRUE;
 }
 
