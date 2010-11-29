@@ -329,7 +329,7 @@ OMAPFBPreInit(ScrnInfoPtr pScrn, int flags)
 			     0, /* depth: overall server default */
 			     ofb->state_info.bits_per_pixel,
 			     ofb->state_info.bits_per_pixel,
-			     0))
+			     Support24bppFb | Support32bppFb))
 		return FALSE;
 
 	xf86PrintDepthBpp(pScrn);
