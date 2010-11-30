@@ -64,6 +64,8 @@ typedef struct {
 	struct omapfb_caps caps;
 	struct omapfb_plane_info plane_info;
 
+	/* Framebuffer path (/dev/fbX) */
+	char fb_path[PATH_MAX];
 	/* LCD controller name */
 	char ctrl_name[32];
 	/* Do we have DSS API? */

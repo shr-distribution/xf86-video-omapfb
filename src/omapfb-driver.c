@@ -171,37 +171,62 @@ OMAPFBProbe(DriverPtr drv, int flags)
 	int i;
        	GDevPtr *devSections;
 	int numDevSections;
-	char *dev;
+	char *config_dev;
 	ScrnInfoPtr pScrn = NULL;
 	Bool foundScreen = FALSE;
+	int fd;
+	int entity;
+	struct fb_fix_screeninfo info;
+	OMAPFBPtr ofb;
 
 	if (flags & PROBE_DETECT) return FALSE;
 
 	/* Search for device sections for us */
-	if ((numDevSections = xf86MatchDevice(OMAPFB_NAME, &devSections)) <= 0) 
+	if ((numDevSections = xf86MatchDevice(OMAPFB_NAME, &devSections)) <= 0) {
+		xf86Msg(X_ERROR,
+		        "%s: Found 0 device sections.\n", __FUNCTION__);
 		return FALSE;
+	}
 
-/* FIXME: We don't really want to do it like this... */
-#define DEFAULT_DEVICE "/dev/fb"
+	if (numDevSections > 1) {
+		xf86Msg(X_WARNING,
+		        "%s: Found %d device sections but supporting only one."
+		        "Ignoring the rest.\n", __FUNCTION__, numDevSections);
+	}
 
-	for (i = 0; i < numDevSections; i++) {
-		int fd;
-		
-		/* Fetch the device path */
-		dev = xf86FindOptionValue(devSections[i]->options, "fb");
+	/* Fetch the device path */
+	config_dev = xf86FindOptionValue(devSections[0]->options, "fb");
 
-		/* Try opening it to see if we can access it */
-		fd = open(dev != NULL ? dev : DEFAULT_DEVICE, O_RDWR, 0);
+#define FB_MAX_FD 8
+	for (i = -1; i < FB_MAX_FD; i++) {
+		char device_path[PATH_MAX];
+
+		/* Concatenate the iterative device path (first attempt
+		   without a number) */
+		if (i == -1) {
+			snprintf(device_path, PATH_MAX, "/dev/fb");
+		} else {
+			snprintf(device_path, PATH_MAX, "/dev/fb%d", i);
+		}
+
+		/* Try opening it to see if we can access it. Use the device path
+		   from configuration, if set */
+		fd = open(config_dev != NULL ? config_dev : device_path, O_RDWR, 0);
+
 		if (fd > 0) {
-			int entity;
-			struct fb_fix_screeninfo info;
-
 			if (ioctl (fd, FBIOGET_FSCREENINFO, &info)) {
 				xf86Msg(X_WARNING,
 				        "%s: Reading hardware info failed: %s\n",
 				        __FUNCTION__, strerror(errno));
 				close(fd);
-				continue;
+
+				/* If using a configured device, return an
+				   error. Otherwise continue iteration. */
+				if (config_dev != NULL) {
+					return FALSE;
+				} else {
+					continue;
+				}
 			}
 			close(fd);
 
@@ -220,7 +245,7 @@ OMAPFBProbe(DriverPtr drv, int flags)
 			foundScreen = TRUE;
 
 			/* Tell the rest of the drivers that this one is ours */
-			entity = xf86ClaimFbSlot(drv, 0, devSections[i], TRUE);
+			entity = xf86ClaimFbSlot(drv, 0, devSections[0], TRUE);
 			pScrn = xf86ConfigFbEntity(pScrn, 0, entity,
 			                           NULL, NULL, NULL, NULL);
 
@@ -234,9 +259,19 @@ OMAPFBProbe(DriverPtr drv, int flags)
 			pScrn->EnterVT       = OMAPFBEnterVT;
 			pScrn->LeaveVT       = OMAPFBLeaveVT;
 
+			/* Get our private data */
+			OMAPFBEnsureRec(pScrn);
+			ofb = OMAPFB(pScrn);
+
+			/* Store the path to framebuffer device */
+			strncpy(ofb->fb_path, config_dev ? config_dev : device_path, PATH_MAX);
+
+			/* Succeeded in finding the framebuffer. */
+			break;
+
 		} else {
-			xf86Msg(X_WARNING, "Could not open '%s': %s",
-			        dev ? dev : DEFAULT_DEVICE, strerror(errno));
+			xf86Msg(X_WARNING, "Could not open '%s': %s\n",
+			        config_dev ? config_dev : device_path, strerror(errno));
 		}
 
 	}
@@ -251,7 +286,6 @@ OMAPFBPreInit(ScrnInfoPtr pScrn, int flags)
 {
 	OMAPFBPtr ofb;
 	EntityInfoPtr pEnt;
-	char *dev;
 	rgb zeros = { 0, 0, 0 };
 	struct stat st;
 
@@ -271,12 +305,11 @@ OMAPFBPreInit(ScrnInfoPtr pScrn, int flags)
 	pEnt = xf86GetEntityInfo(pScrn->entityList[0]);
 	
 	/* Open the device node */
-	dev = xf86FindOptionValue(pEnt->device->options, "fb");
-	ofb->fd = open(dev != NULL ? dev : DEFAULT_DEVICE, O_RDWR, 0);
+	ofb->fd = open(ofb->fb_path, O_RDWR, 0);
 	if (ofb->fd == -1) {
 		xf86DrvMsg(pScrn->scrnIndex, X_ERROR,
 		           "%s: Opening '%s' failed: %s\n", __FUNCTION__,
-		           dev != NULL ? dev : DEFAULT_DEVICE, strerror(errno));
+		           ofb->fb_path, strerror(errno));
 		OMAPFBFreeRec(pScrn);
 		return FALSE;
 	}
