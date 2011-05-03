@@ -125,8 +125,13 @@ OMAPFBOutputGetModes(xf86OutputPtr output)
 	/* Only populate the native (current) mode */
 	mode = calloc(1, sizeof(DisplayModeRec));
 	mode->type      |= M_T_PREFERRED;
-	mode->Clock = PICOS2KHZ(ofb->state_info.pixclock);
-	mode->SynthClock = PICOS2KHZ(ofb->state_info.pixclock);
+	if (ofb->state_info.pixclock == 0) {
+		mode->Clock = 0;
+		mode->SynthClock = 0;
+	} else {
+		mode->Clock = PICOS2KHZ(ofb->state_info.pixclock);
+		mode->SynthClock = PICOS2KHZ(ofb->state_info.pixclock);
+	}
 	mode->HDisplay   = ofb->state_info.xres;
 	mode->HSyncStart = mode->HDisplay
 	                  + ofb->state_info.right_margin;
